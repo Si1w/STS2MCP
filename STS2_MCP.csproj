@@ -4,14 +4,23 @@
     <OutputType>Library</OutputType>
     <Nullable>enable</Nullable>
     <LangVersion>12.0</LangVersion>
-    <!-- Set your STS2 install path here, or pass as: dotnet build -p:STS2GameDir="..." -->
+    <!-- Set your STS2 install path here, pass it as: dotnet build -p:STS2GameDir="...",
+         or export STS2_GAME_ROOT in the environment. -->
+    <STS2GameDir Condition="'$(STS2GameDir)' == '' and '$(STS2_GAME_ROOT)' != ''">$(STS2_GAME_ROOT)</STS2GameDir>
     <STS2GameDir Condition="'$(STS2GameDir)' == ''">D:\SteamLibrary\steamapps\common\Slay the Spire 2</STS2GameDir>
+    <!-- Cross-building (e.g. WSL against the Windows install): use whichever data dir exists. -->
+    <STS2GameDataDir Condition="'$(STS2GameDataDir)' == '' and Exists('$(STS2GameDir)/data_sts2_windows_x86_64/sts2.dll')">$(STS2GameDir)/data_sts2_windows_x86_64</STS2GameDataDir>
+    <STS2GameDataDir Condition="'$(STS2GameDataDir)' == '' and Exists('$(STS2GameDir)/data_sts2_linuxbsd_x86_64/sts2.dll')">$(STS2GameDir)/data_sts2_linuxbsd_x86_64</STS2GameDataDir>
     <STS2GameDataDir Condition="'$(STS2GameDataDir)' == '' and '$(OS)' == 'Windows_NT'">$(STS2GameDir)/data_sts2_windows_x86_64</STS2GameDataDir>
     <!-- macOS support: DLLs live inside the .app bundle under Resources/data_sts2_macos_arm64 -->
     <STS2GameDataDir Condition="'$(STS2GameDataDir)' == '' and $([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))">$(STS2GameDir)/SlayTheSpire2.app/Contents/Resources/data_sts2_macos_arm64</STS2GameDataDir>
     <!-- Linux fallback (original behavior) -->
     <STS2GameDataDir Condition="'$(STS2GameDataDir)' == '' and '$(OS)' != 'Windows_NT' and !$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))">$(STS2GameDir)/data_sts2_linuxbsd_x86_64</STS2GameDataDir>
   </PropertyGroup>
+
+  <Target Name="CheckGameDir" BeforeTargets="ResolveAssemblyReferences">
+    <Error Condition="!Exists('$(STS2GameDataDir)/sts2.dll')" Text="sts2.dll not found under '$(STS2GameDataDir)'. Set STS2GameDir (or STS2_GAME_ROOT) to your Slay the Spire 2 install." />
+  </Target>
 
   <ItemGroup>
     <Reference Include="sts2">

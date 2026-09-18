@@ -159,6 +159,12 @@ public static partial class McpMod
         var hand = NCombatRoom.Instance?.Ui?.Hand;
         if (hand != null && (hand.InCardPlay || hand.CurrentMode != NPlayerHand.Mode.Play))
             return Error("Cannot end turn while a card is being played or hand is in selection mode");
+        // RL: a card/potion effect can still be executing after the hand reports
+        // the play as finished; ending the turn then overlaps the game's own tasks.
+        if (CombatManager.Instance.IsExecutingCardOrPotionEffect(player))
+            return Error("Cannot end turn while a card or potion effect is still executing");
+        if (CombatManager.Instance.EndingPlayerTurnPhaseOne || CombatManager.Instance.EndingPlayerTurnPhaseTwo)
+            return Error("Turn is already ending");
 
         PlayerCmd.EndTurn(player, canBackOut: false);
 

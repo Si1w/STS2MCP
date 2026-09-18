@@ -450,6 +450,15 @@ public static partial class McpMod
 
         string action = actionElem.GetString() ?? "";
 
+        // RL: headless-only helpers that need no run.
+        if (action == "reveal_epochs" || action == "abandon_run")
+        {
+            Func<Dictionary<string, object?>> op = action == "reveal_epochs" ? ExecuteRevealEpochs : ExecuteAbandonRun;
+            try { SendJson(response, RunOnMainThread(op).GetAwaiter().GetResult()); }
+            catch (Exception ex) { SendError(response, 500, $"{action} failed: {ex.Message}"); }
+            return;
+        }
+
         // Handle menu actions separately (no run required)
         if (action == "menu_select")
         {

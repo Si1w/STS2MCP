@@ -1073,6 +1073,23 @@ public static partial class McpMod
         battle["round"] = combatState.RoundNumber;
         battle["turn"] = combatState.CurrentSide.ToString().ToLower();
         battle["is_play_phase"] = IsPlayPhase(combatState);
+        // RL: true only when the game would accept play_card / end_turn right now. The play
+        // phase alone is not enough: actions stay disabled while card and enemy effects resolve.
+        var cm = CombatManager.Instance;
+        bool executingEffect = combatState.Players.Any(pl => cm.IsExecutingCardOrPotionEffect(pl));
+        bool handInCardPlay = NCombatRoom.Instance?.Ui?.Hand?.InCardPlay ?? false;
+        battle["actions_enabled"] = IsPlayPhase(combatState) && !cm.PlayerActionsDisabled
+            && !executingEffect && !handInCardPlay;
+        battle["flags"] = new Dictionary<string, object?>
+        {
+            ["player_actions_disabled"] = cm.PlayerActionsDisabled,
+            ["ending_turn_phase_one"] = cm.EndingPlayerTurnPhaseOne,
+            ["ending_turn_phase_two"] = cm.EndingPlayerTurnPhaseTwo,
+            ["is_enemy_turn_started"] = cm.IsEnemyTurnStarted,
+            ["is_paused"] = cm.IsPaused,
+            ["is_executing_effect"] = executingEffect,
+            ["hand_in_card_play"] = handInCardPlay,
+        };
 
         // Enemies
         var enemies = new List<Dictionary<string, object?>>();

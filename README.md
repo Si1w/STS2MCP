@@ -4,6 +4,13 @@
 
 <p align="center"><em>An Experimental Research Project to Fully-Automate your Slay the Spire 2 Runs</em></p>
 
+> [!note]
+> **This is a fork** ([Si1w/STS2MCP](https://github.com/Si1w/STS2MCP), branch `rl`) used as the
+> engine bridge of [sts-agent](https://github.com/Si1w/sts-agent). It adds what a headless
+> reinforcement-learning agent needs on top of upstream STS2MCP: `abandon_run`, `reveal_epochs`,
+> `battle.actions_enabled` + raw combat flags, and a hardened `end_turn`. See
+> [docs/rl-fork.md](docs/rl-fork.md). Everything else is upstream, unchanged.
+
 A mod for [**Slay the Spire 2**](https://store.steampowered.com/app/2868840/Slay_the_Spire_2/) that lets AI agents play the game. Exposes game state and actions via a localhost REST API, with an optional MCP server for Claude Desktop / Claude Code integration.
 
 Singleplayer and multiplayer (co-op) supported, plus full menu and lobby control: profile switching, character select (SP and MP host/client) with optional seed, multiplayer host / Steam-friend join / FastMP localhost join, multiplayer load lobby for resuming saved co-op runs, game-over dismissal, FTUE/tutorial popup handling, and Timeline visibility. Tested against STS2 `v0.103.2`.
