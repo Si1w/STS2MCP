@@ -6,7 +6,7 @@
 
 > [!note]
 > **This is a fork** ([Si1w/STS2MCP](https://github.com/Si1w/STS2MCP), branch `rl`) used as the
-> engine bridge of [sts-agent](https://github.com/Si1w/sts-agent). It adds what a headless
+> engine bridge of [PocketSts2Agent](https://github.com/Si1w/PocketSts2Agent). It adds what a headless
 > reinforcement-learning agent needs on top of upstream STS2MCP: `abandon_run`, `reveal_epochs`,
 > `battle.actions_enabled` + raw combat flags, and a hardened `end_turn`. See
 > [docs/rl-fork.md](docs/rl-fork.md). Everything else is upstream, unchanged.
